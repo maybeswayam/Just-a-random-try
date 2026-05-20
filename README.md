@@ -37,26 +37,33 @@ sequenceDiagram
 ## 🛠️ Setup & Installation
 
 ### Prerequisites
+
 - Node.js v18+
-- A dedicated WhatsApp account for outreach 
+- A dedicated WhatsApp account for outreach
 
 ### 1. Clone the Repository
+
 ```bash
 git clone https://github.com/maybeswayam/Whatsapp-automation-bot.git
 cd Whatsapp-automation-bot
 ```
 
 ### 2. Configuration
+
 Copy the environment template:
+
 ```bash
 cp .env.example .env
 ```
+
 Edit `.env` to include your OpenRouter API key and your forwarding/agent WhatsApp number.
 
 ### 3. Setup Contacts
+
 Edit `contacts.csv` with your leads. (Format typically includes parameters used by your templates like Name, Phone, and Property details).
 
 ### 4. Install & Run
+
 ```bash
 npm install
 npm start
@@ -69,7 +76,7 @@ npm start
 The codebase is modular, making it easy to adapt or expand:
 
 - `index.js` - Main entry point configuring modules and running the bot.
-- `modules/` 
+- `modules/`
   - `csvLoader.js` / `stateStore.js` - File parsing and local data management.
   - `templateEngine.js` / `scheduler.js` - Message structuring & queue management with human delays.
   - `waClient.js` / `replyListener.js` - Core WhatsApp web listeners and dispatchers.
@@ -77,7 +84,9 @@ The codebase is modular, making it easy to adapt or expand:
   - `forwardEngine.js` - Agent notification routing.
 
 ## ⚠️ Compliance & Ban Risk
-**Important:** WhatsApp has strict anti-spam policies. Automated cold outreach carries a high risk of the sending number being banned. 
+
+**Important:** WhatsApp has strict anti-spam policies. Automated cold outreach carries a high risk of the sending number being banned.
+
 - Warm up your number gradually.
 - Keep batch volumes very low.
 - Personalize templates heavily to increase positive response rates.
