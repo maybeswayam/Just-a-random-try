@@ -1,93 +1,260 @@
-﻿# WhatsApp Real Estate Automation Bot
+<div align="center">
 
-![Node.js](https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js&style=flat-square)
-![WhatsApp](https://img.shields.io/badge/WhatsApp-Automation-25D366?logo=whatsapp&style=flat-square)
-![AI](https://img.shields.io/badge/OpenRouter-AI_Scoring-blue?logo=openai&style=flat-square)
+# 🏠 WhatsApp Real Estate Outreach Bot
 
-An intelligent, automated outreach tool tailored for Real Estate professionals. This bot manages initial communications, analyzes responses using AI, and automatically hands off qualified leads to your agents.
+**Automated WhatsApp outreach with AI-powered lead scoring and instant forwarding**
 
-## 📊 How It Works
+[![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
+[![whatsapp-web.js](https://img.shields.io/badge/whatsapp--web.js-1.23-25D366?style=flat-square&logo=whatsapp&logoColor=white)](https://github.com/pedroslopez/whatsapp-web.js)
+[![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-6366f1?style=flat-square)](https://openrouter.ai)
+[![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
-```mermaid
-sequenceDiagram
-    autonumber
-    participant App as Bot Engine
-    participant WA as WhatsApp Web Client
-    participant AI as OpenRouter AI
-    participant Team as Broker / Agent
+</div>
 
-    App->>WA: Load contacts & send initial outreach with delays
-    Note over WA: Wait for prospect response
-    WA-->>App: Prospect replies
-    App->>AI: Evaluate conversation context
-    AI-->>App: Score lead (HOT 🔥 / WARM 🌤️ / COLD ❄️)
-    opt If score matches threshold (e.g. HOT)
-        App->>Team: Auto-forward clean lead summary
-    end
+---
+
+## What It Does
+
+You drop a CSV of contacts (name, number, buyer/seller intent) and this bot handles everything:
+
+1. **Sends personalized opening messages** with randomized delays to avoid detection
+2. **Monitors all replies** and matches them back to your contact list
+3. **Scores each conversation** via AI (HOT / WARM / COLD)
+4. **Forwards a clean summary** to your designated WhatsApp number when a HOT lead is detected — instantly
+
+---
+
+## Architecture
+
+```
+contacts.csv
+     │
+     ▼
+┌─────────────────┐
+│  csvLoader.js   │  Normalize numbers · dedupe · validate intent
+└────────┬────────┘
+         │
+         ▼
+┌─────────────────┐         ┌──────────────┐
+│  stateStore.js  │◄───────►│  state.json  │  Async lock · atomic writes
+└────────┬────────┘         └──────────────┘
+         │
+         ▼
+┌─────────────────┐
+│   waClient.js   │◄───────► WhatsApp (QR auth · LocalAuth session)
+└────────┬────────┘
+         │
+   ┌─────┴──────┐
+   │            │
+   ▼            ▼
+OUTREACH     LISTEN
+   │            │
+   ▼            ▼
+┌──────────┐  ┌──────────────────┐
+│scheduler │  │ replyListener.js │
+│   .js    │  │ CSV-scoped only  │
+└──────────┘  └────────┬─────────┘
+   │                   │
+   ▼                   ▼
+┌──────────────┐  ┌──────────────┐
+│templateEngine│  │  aiScorer.js │  HOT / WARM / COLD
+│  4 variants  │  │  w/ backoff  │
+└──────────────┘  └──────┬───────┘
+                         │
+                         ▼
+                  ┌──────────────────┐
+                  │ forwardEngine.js │  HOT only · no duplicate forward
+                  └──────┬───────────┘
+                         │
+                         ▼
+                  📱 Designated number
 ```
 
-## 🚀 Key Features
+---
 
-- **Automated Drop Loading**: Easily import prospects from a simple `contacts.csv` file.
-- **Smart Delay Scheduling**: Mimics human behavior by adding randomized delays between messages to minimize spam detection.
-- **AI-Powered Lead Scoring**: Automatically reads prospect replies and grades the lead's temperature using OpenRouter's LLMs.
-- **Smart Forwarding to Agents**: Curates the conversation and automatically forwards only the high-intent (HOT) prospects to your personal/team WhatsApp number.
-- **Persistent State Tracking**: Resumes safely automatically. Your outreach state is continuously saved in `state.json`.
+## Contact State Flow
 
-## 🛠️ Setup & Installation
+```
+PENDING ──► SENT ──► REPLIED ──► SCORED ──► [HOT]  → FORWARDED ✅
+                                          └─► [WARM/COLD] → IGNORED 🔇
+```
 
-### Prerequisites
+Each contact is tracked with full conversation history and only forwarded once.
 
-- Node.js v18+
-- A dedicated WhatsApp account for outreach
+---
 
-### 1. Clone the Repository
+## Project Structure
+
+```
+whatsapp-realestate-bot/
+├── index.js                 # Orchestrator
+├── config.js                # Central config (reads .env)
+├── contacts.csv             # Your contact list
+├── .env.example             # Template for secrets
+├── .gitignore               # state.json excluded
+└── modules/
+    ├── csvLoader.js         # Parse, normalize, dedupe contacts
+    ├── stateStore.js        # JSON persistence + async write lock
+    ├── templateEngine.js    # 4 message variants per buyer/seller
+    ├── waClient.js          # whatsapp-web.js + LocalAuth
+    ├── scheduler.js         # Outreach pacing + concurrency guard
+    ├── replyListener.js     # Inbound handler + lead pipeline
+    ├── aiScorer.js          # OpenRouter scoring w/ retry backoff
+    └── forwardEngine.js     # Format + forward HOT leads
+```
+
+---
+
+## Quick Start
+
+### 1. Install
 
 ```bash
 git clone https://github.com/maybeswayam/Whatsapp-automation-bot.git
 cd Whatsapp-automation-bot
+npm install
 ```
 
-### 2. Configuration
-
-Copy the environment template:
+### 2. Configure
 
 ```bash
 cp .env.example .env
 ```
 
-Edit `.env` to include your OpenRouter API key and your forwarding/agent WhatsApp number.
+Edit `.env`:
 
-### 3. Setup Contacts
+```env
+OPENROUTER_API_KEY=your_key_here
+FORWARD_TO_NUMBER=918979909409        # digits only, no + or spaces
 
-Edit `contacts.csv` with your leads. (Format typically includes parameters used by your templates like Name, Phone, and Property details).
+# Optional tuning
+MIN_DELAY_SECONDS=45
+MAX_DELAY_SECONDS=90
+MAX_MESSAGES_PER_DAY=35
+FORWARD_IF_SCORE_IN=HOT
+OPENROUTER_MODEL=meta-llama/llama-3.1-8b-instruct:free
+```
 
-### 4. Install & Run
+### 3. Prepare contacts
+
+Edit `contacts.csv`:
+
+```csv
+name,number,intent,property_type,location
+Rahul Sharma,+91 98765 43210,buyer,2BHK,Noida
+Priya Singh,919876543211,seller,villa,Gurgaon
+Amit Verma,+91-9123456789,buyer,,Delhi
+```
+
+Required columns: `name`, `number`, `intent` (`buyer` or `seller`)
+Optional columns: `property_type`, `location`
+
+Numbers are auto-normalized — `+91 987...`, `91987...`, or `9876543210` all work.
+
+### 4. Run
 
 ```bash
-npm install
 npm start
 ```
 
-*On the first run, the terminal will display a QR code. Open WhatsApp on your mobile device -> Linked Devices -> Scan to authenticate.*
+On first run, scan the QR code in terminal using **WhatsApp → Linked Devices → Link a device**.
+After that, session persists automatically.
 
-## 📂 Project Architecture
+---
 
-The codebase is modular, making it easy to adapt or expand:
+## How the AI Scoring Works
 
-- `index.js` - Main entry point configuring modules and running the bot.
-- `modules/`
-  - `csvLoader.js` / `stateStore.js` - File parsing and local data management.
-  - `templateEngine.js` / `scheduler.js` - Message structuring & queue management with human delays.
-  - `waClient.js` / `replyListener.js` - Core WhatsApp web listeners and dispatchers.
-  - `aiScorer.js` - LLM interaction for intent grading (via OpenRouter).
-  - `forwardEngine.js` - Agent notification routing.
+Every inbound reply triggers an OpenRouter API call with the full conversation context.
 
-## ⚠️ Compliance & Ban Risk
+The model returns a structured verdict:
 
-**Important:** WhatsApp has strict anti-spam policies. Automated cold outreach carries a high risk of the sending number being banned.
+```json
+{
+  "score": "HOT",
+  "reason": "Prospect asked about price and requested a site visit"
+}
+```
 
-- Warm up your number gradually.
-- Keep batch volumes very low.
-- Personalize templates heavily to increase positive response rates.
-- Understand local regulations regarding cold outreach.
+**HOT** → forwarded immediately with full conversation summary  
+**WARM / COLD** → logged, no forward  
+
+Once a lead is forwarded, subsequent messages from that contact are stored but not re-scored — saving API credits.
+
+---
+
+## Forwarded Message Format
+
+When a HOT lead is detected, your designated number receives:
+
+```
+🔥 HOT LEAD ALERT
+
+👤 Name: Rahul Sharma
+📞 Number: +919876543210
+🏠 Intent: Buyer | 2BHK | Noida
+
+💬 Conversation:
+  You → "Hi Rahul, I came across your inquiry about buying a 2BHK in Noida..."
+  Rahul → "Yes I'm interested, what's the budget range?"
+  You → "We have options between ₹45L–₹65L depending on the floor"
+  Rahul → "Can I visit this Saturday?"
+
+🤖 AI Verdict: HOT
+📝 Reason: Prospect asked about price and requested a site visit
+
+⏱ Time: 20 May 2026, 4:32 PM
+```
+
+---
+
+## Safety & Anti-Ban Controls
+
+| Control | Value | Purpose |
+|---|---|---|
+| Message delay | 45–90s random | Mimics human typing cadence |
+| Daily cap | 35 messages/day | Stays well under WA limits |
+| Concurrency guard | `isRunning` flag | Prevents double-sends on restart |
+| Contact scope | CSV-only | Ignores messages from unknown numbers |
+| Session persistence | `LocalAuth` | Avoids repeated QR scans |
+| Template variants | 4 per intent | Reduces identical-message detection |
+
+> **Recommended:** Use a dedicated SIM/number for the bot rather than your personal number.
+
+---
+
+## Configuration Reference
+
+| Variable | Default | Description |
+|---|---|---|
+| `OPENROUTER_API_KEY` | — | **Required.** Your OpenRouter API key |
+| `FORWARD_TO_NUMBER` | — | **Required.** Digits-only number to receive lead alerts |
+| `MIN_DELAY_SECONDS` | `45` | Minimum delay between outreach messages |
+| `MAX_DELAY_SECONDS` | `90` | Maximum delay between outreach messages |
+| `MAX_MESSAGES_PER_DAY` | `35` | Daily outreach cap (resets at midnight) |
+| `FORWARD_IF_SCORE_IN` | `HOT` | Comma-separated scores that trigger forwarding |
+| `OPENROUTER_MODEL` | `meta-llama/llama-3.1-8b-instruct:free` | Model for lead scoring |
+
+---
+
+## Recommended Next Steps
+
+- [ ] **Opt-out handling** — detect keywords like "STOP" and flag contact as do-not-contact
+- [ ] **Negative reply throttling** — back off if someone replies rudely or asks to be removed  
+- [ ] **SQLite migration** — replace JSON store for better concurrency at 100+ contacts
+- [ ] **Dry-run mode** — preview what messages would be sent without actually sending
+- [ ] **Dashboard** — simple web UI to see contact status, scores, and conversation history
+
+---
+
+## Tech Stack
+
+- **[whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js)** — WhatsApp Web automation via Puppeteer
+- **[OpenRouter](https://openrouter.ai)** — Unified LLM API for lead scoring
+- **Node.js ESM** — Native ES modules throughout
+- **JSON state** — Simple file-based persistence with async write locking
+
+---
+
+<div align="center">
+  Built for real estate outreach automation · Use responsibly
+</div>
