@@ -1,88 +1,84 @@
-<div align="center">
-  <img src="https://images.unsplash.com/photo-1560518883-ce09059eeffa?ixlib=rb-4.0.3&auto=format&fit=crop&w=1000&q=80" alt="Real Estate Automation" width="100%" style="border-radius: 10px;" />
+﻿# WhatsApp Real Estate Automation Bot
 
-  <h1>?? WhatsApp Real Estate Automation Bot</h1>
-  <p><strong>Intelligent Outreach � AI Conversation Scoring � Auto-Forwarding</strong></p>
-  
-  <p>
-    <img src="https://img.shields.io/badge/Node.js-18%2B-green?style=for-the-badge&logo=node.js" alt="Node.js" />
-    <img src="https://img.shields.io/badge/WhatsApp_Web.js-Enabled-25D366?style=for-the-badge&logo=whatsapp" alt="WhatsApp" />
-    <img src="https://img.shields.io/badge/AI-OpenRouter-blue?style=for-the-badge&logo=openai" alt="AI Powered" />
-    <img src="https://img.shields.io/badge/Status-Active-success?style=for-the-badge" alt="Status" />
-  </p>
-</div>
+![Node.js](https://img.shields.io/badge/Node.js-18%2B-green?logo=node.js&style=flat-square)
+![WhatsApp](https://img.shields.io/badge/WhatsApp-Automation-25D366?logo=whatsapp&style=flat-square)
+![AI](https://img.shields.io/badge/OpenRouter-AI_Scoring-blue?logo=openai&style=flat-square)
 
-## ? Overview
+An intelligent, automated outreach tool tailored for Real Estate professionals. This bot manages initial communications, analyzes responses using AI, and automatically hands off qualified leads to your agents.
 
-This project is a powerful WhatsApp automation tool tailored for Real Estate outreach. It fully automates the process of contacting potential buyers or sellers, nurturing conversations, and using AI to qualify leads!
+## 📊 How It Works
 
-### ?? Key Features
+```mermaid
+sequenceDiagram
+    autonumber
+    participant App as Bot Engine
+    participant WA as WhatsApp Web Client
+    participant AI as OpenRouter AI
+    participant Team as Broker / Agent
 
-- **?? CSV Contact Loading**: Automatically load and parse your lead lists from contacts.csv.
-- **?? Smart Template Messaging**: Sends personalized first messages (buyer/seller templates) with human-like delays to avoid spam detection.
-- **?? Active Listening**: Monitors and logs replies from prospects in real-time.
-- **?? AI Lead Scoring**: Analyzes conversations utilizing OpenRouter AI to intelligently score leads as ?? HOT, ??? WARM, or ?? COLD.
-- **?? Auto-Forwarding**: Seamlessly forwards a clean, formatted summary of qualified leads (e.g., matching the HOT threshold) to your designated team WhatsApp number.
+    App->>WA: Load contacts & send initial outreach with delays
+    Note over WA: Wait for prospect response
+    WA-->>App: Prospect replies
+    App->>AI: Evaluate conversation context
+    AI-->>App: Score lead (HOT 🔥 / WARM 🌤️ / COLD ❄️)
+    opt If score matches threshold (e.g. HOT)
+        App->>Team: Auto-forward clean lead summary
+    end
+```
 
----
+## 🚀 Key Features
 
-## ??? Setup & Installation
+- **Automated Drop Loading**: Easily import prospects from a simple `contacts.csv` file.
+- **Smart Delay Scheduling**: Mimics human behavior by adding randomized delays between messages to minimize spam detection.
+- **AI-Powered Lead Scoring**: Automatically reads prospect replies and grades the lead's temperature using OpenRouter's LLMs.
+- **Smart Forwarding to Agents**: Curates the conversation and automatically forwards only the high-intent (HOT) prospects to your personal/team WhatsApp number.
+- **Persistent State Tracking**: Resumes safely automatically. Your outreach state is continuously saved in `state.json`.
+
+## 🛠️ Setup & Installation
 
 ### Prerequisites
-- [Node.js](https://nodejs.org/) (v18 or higher)
-- A dedicated WhatsApp account for outreach.
+- Node.js v18+
+- A dedicated WhatsApp account for outreach 
 
-### Installation
+### 1. Clone the Repository
+```bash
+git clone https://github.com/maybeswayam/Whatsapp-automation-bot.git
+cd Whatsapp-automation-bot
+```
 
-1. **Clone the Repository**
-   \\\ash
-   git clone https://github.com/maybeswayam/Whatsapp-automation-bot.git
-   cd Whatsapp-automation-bot
-   \\\
+### 2. Configuration
+Copy the environment template:
+```bash
+cp .env.example .env
+```
+Edit `.env` to include your OpenRouter API key and your forwarding/agent WhatsApp number.
 
-2. **Configure Environment Variables**
-   Copy the example config and fill in your credentials:
-   \\\ash
-   cp .env.example .env
-   \\\
-   *Make sure to provide your OpenRouter API keys and forwarding number in .env.*
+### 3. Setup Contacts
+Edit `contacts.csv` with your leads. (Format typically includes parameters used by your templates like Name, Phone, and Property details).
 
-3. **Prepare Your Lead List**
-   Edit contacts.csv with the details of your prospects.
+### 4. Install & Run
+```bash
+npm install
+npm start
+```
 
-4. **Install Dependencies**
-   \\\ash
-   npm install
-   \\\
+*On the first run, the terminal will display a QR code. Open WhatsApp on your mobile device -> Linked Devices -> Scan to authenticate.*
 
-5. **Start the Bot**
-   \\\ash
-   npm start
-   \\\
-6. **Authenticate**
-   Open WhatsApp on your phone, go to **Linked Devices**, and scan the QR code generated in the terminal on the first run.
+## 📂 Project Architecture
 
----
+The codebase is modular, making it easy to adapt or expand:
 
-## ?? Project Structure
+- `index.js` - Main entry point configuring modules and running the bot.
+- `modules/` 
+  - `csvLoader.js` / `stateStore.js` - File parsing and local data management.
+  - `templateEngine.js` / `scheduler.js` - Message structuring & queue management with human delays.
+  - `waClient.js` / `replyListener.js` - Core WhatsApp web listeners and dispatchers.
+  - `aiScorer.js` - LLM interaction for intent grading (via OpenRouter).
+  - `forwardEngine.js` - Agent notification routing.
 
-- ?? contacts.csv � Your outreach prospect list.
-- ?? state.json � Auto-generated database persisting outreach state (sent, replied, conversation history, AI score, forwarded status).
-- ?? .wwebjs_auth/ � Local WhatsApp session cache (created automatically after the first QR scan).
-- ?? modules/ - Core logic for AI scoring, forwarding, listeners, scheduling, and state management.
-
----
-
-## ?? Important Compliance Notice
-
-**Ban Risk Warning:** Automated outreach may violate WhatsApp's Terms of Service and can result in phone numbers getting banned. 
-- Always use conservative sending limits.
-- Warm up new numbers gradually.
-- Keep your messaging highly relevant and avoid spam-like patterns.
-- Ensure prospects have opted-in where legally required.
-
----
-
-<div align="center">
-  <i>Developed with ?? for real estate professionals optimizing workflow automation.</i>
-</div>
+## ⚠️ Compliance & Ban Risk
+**Important:** WhatsApp has strict anti-spam policies. Automated cold outreach carries a high risk of the sending number being banned. 
+- Warm up your number gradually.
+- Keep batch volumes very low.
+- Personalize templates heavily to increase positive response rates.
+- Understand local regulations regarding cold outreach.
