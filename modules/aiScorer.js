@@ -1,4 +1,8 @@
-import { config } from '../config.js';
+﻿import { config } from '../config.js';
+
+function sleep(ms) {
+  return new Promise((r) => setTimeout(r, ms));
+}
 
 function stripCodeFences(s) {
   if (!s) return s;
@@ -34,39 +38,55 @@ export async function scoreLead(contact) {
     temperature: 0.2
   };
 
-  const res = await fetch(`${config.openRouter.baseUrl}/chat/completions`, {
-    method: 'POST',
-    headers: {
-      Authorization: `Bearer ${config.openRouter.apiKey}`,
-      'Content-Type': 'application/json'
-    },
-    body: JSON.stringify(payload)
-  });
+  let attempt = 0;
+  const maxAttempts = 3;
 
-  if (!res.ok) {
-    const text = await res.text();
-    throw new Error(`OpenRouter error ${res.status}: ${text}`);
+  while (attempt < maxAttempts) {
+    try {
+      const res = await fetch(`${config.openRouter.baseUrl}/chat/completions`, {
+        method: 'POST',
+        headers: {
+          Authorization: `Bearer ${config.openRouter.apiKey}`,
+          'Content-Type': 'application/json'
+        },
+        body: JSON.stringify(payload)
+      });
+
+      if (!res.ok) {
+        const text = await res.text();
+        throw new Error(`OpenRouter error ${res.status}: ${text}`);
+      }
+
+      const data = await res.json();
+      const content = data?.choices?.[0]?.message?.content || '';
+      const cleaned = stripCodeFences(content);
+
+      let parsed;
+      try {
+        parsed = JSON.parse(cleaned);
+      } catch {
+        // Try extracting first {...} block
+        const match = cleaned.match(/\{[\s\S]*\}/);
+        if (match) parsed = JSON.parse(match[0]);
+      }
+
+      const score = String(parsed?.score || '').toUpperCase().trim();
+      const reason = String(parsed?.reason || '').trim();
+      if (!['HOT', 'WARM', 'COLD'].includes(score) || !reason) {
+        throw new Error(`Invalid scorer output: ${cleaned}`);
+      }
+
+      return { score, reason };
+    } catch (err) {
+      attempt++;
+      console.warn(`[AI] Attempt ${attempt} failed: ${err.message}`);
+      if (attempt >= maxAttempts) {
+         console.error(`[AI] All ${maxAttempts} attempts to score lead failed.`);
+         return null;
+      }
+      const backoffMs = attempt * 2000; // 2s, 4s
+      console.log(`[AI] Retrying in ${backoffMs}ms...`);
+      await sleep(backoffMs);
+    }
   }
-
-  const data = await res.json();
-  const content = data?.choices?.[0]?.message?.content || '';
-  const cleaned = stripCodeFences(content);
-
-  let parsed;
-  try {
-    parsed = JSON.parse(cleaned);
-  } catch {
-    // Try extracting first {...} block
-    const match = cleaned.match(/\{[\s\S]*\}/);
-    if (match) parsed = JSON.parse(match[0]);
-  }
-
-  const score = String(parsed?.score || '').toUpperCase().trim();
-  const reason = String(parsed?.reason || '').trim();
-  if (!['HOT', 'WARM', 'COLD'].includes(score) || !reason) {
-    throw new Error(`Invalid scorer output: ${cleaned}`);
-  }
-
-  return { score, reason };
 }
-
