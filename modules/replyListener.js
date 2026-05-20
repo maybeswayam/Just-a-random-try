@@ -1,4 +1,4 @@
-import { getState, updateContact } from './stateStore.js';
+﻿import { getState, updateContact } from './stateStore.js';
 import { scoreLead } from './aiScorer.js';
 import { forwardLeadIfNeeded } from './forwardEngine.js';
 import { config } from '../config.js';
@@ -32,6 +32,13 @@ export function attachReplyListener({ client }) {
         return c;
       });
 
+      // If already forwarded, we might not want to re-score every single time they reply
+      // or at least we don't attempt to forward again.
+      if (updatedAfterInbound.forwarded) {
+        // Skip re-scoring to save API calls since lead is already closed/forwarded.
+        return;
+      }
+
       // Score
       let verdict = null;
       try {
@@ -62,4 +69,3 @@ export function attachReplyListener({ client }) {
     }
   });
 }
-
