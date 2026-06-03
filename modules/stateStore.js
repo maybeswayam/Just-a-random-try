@@ -97,6 +97,13 @@ export async function syncContactsIntoState(statePath, contacts) {
           ...c
         };
       }
+
+      if (process.env.TEST_MODE === 'true') {
+        state.contacts[c.id].sent = false;
+        state.contacts[c.id].replied = false;
+        // Optionally reset other fields context
+        // state.contacts[c.id].conversation = [];
+      }
     }
     state.meta.updatedAt = new Date().toISOString();
     await atomicWriteJson(statePath, state);

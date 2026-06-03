@@ -9,6 +9,17 @@ function formatConversation(contact) {
   return lines.join('\n');
 }
 
+function suggestNextStep(contact) {
+  const score = String(contact.leadScore || '').toUpperCase();
+  if (score === 'HOT') {
+    return '📌 Suggested next step: Schedule call';
+  }
+  if (score === 'WARM') {
+    return '📌 Suggested next step: Send portfolio';
+  }
+  return '📌 Suggested next step: Follow up in 2-3 days';
+}
+
 export async function forwardLeadIfNeeded({ client, contact }) {
   if (!config.forwardToNumber) return false;
   if (contact.forwarded) return false;
@@ -17,17 +28,18 @@ export async function forwardLeadIfNeeded({ client, contact }) {
 
   const summary =
     `🔥 ${contact.leadScore} LEAD ALERT\n\n` +
-    `👤 Name: ${contact.name}\n` +
+    `👤 Business: ${contact.name}\n` +
+    `🏷 Type: ${contact.business_type || 'N/A'}\n` +
     `📞 Number: +${contact.number}\n` +
-    `🏠 Intent: ${contact.intent}${contact.property_type ? ` | ${contact.property_type}` : ''}${
-      contact.location ? ` | ${contact.location}` : ''
-    }\n\n` +
-    `💬 Conversation:\n${formatConversation(contact)}\n\n` +
-    `🤖 AI Verdict: ${contact.leadScore}\n` +
+    `📋 Notable info: ${contact.notable_info || 'N/A'}\n` +
+    `🌐 Has website: ${contact.has_website ? 'Yes' : 'No'}\n` +
+    `📢 Running ads: ${contact.running_ads ? 'Yes' : 'No'}\n\n` +
+    `🤖 Lead Score: ${contact.leadScore}\n` +
     `📝 Reason: ${contact.leadReason || ''}\n\n` +
+    `💬 Conversation:\n${formatConversation(contact)}\n\n` +
+    `${suggestNextStep(contact)}\n\n` +
     `⏱ Time: ${new Date().toLocaleString()}`;
 
   await sendMessageToNumber(client, config.forwardToNumber, summary);
   return true;
 }
-

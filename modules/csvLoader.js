@@ -35,6 +35,11 @@ export function normalizeNumber(input) {
   return digits;
 }
 
+function toBool(val) {
+  if (!val) return false;
+  return String(val).trim().toLowerCase() !== 'no';
+}
+
 export async function loadContacts(csvPath) {
   const raw = await readFile(csvPath, 'utf8');
   const lines = raw
@@ -47,7 +52,7 @@ export async function loadContacts(csvPath) {
   const header = parseCsvLine(lines[0]).map((h) => h.toLowerCase());
   const idx = (name) => header.indexOf(name);
 
-  const required = ['name', 'number', 'intent'];
+  const required = ['name', 'number', 'business_type'];
   for (const r of required) {
     if (idx(r) === -1) {
       throw new Error(`contacts.csv missing required column: ${r}`);
@@ -61,15 +66,14 @@ export async function loadContacts(csvPath) {
     const cols = parseCsvLine(lines[i]);
     const name = cols[idx('name')] || '';
     const numberRaw = cols[idx('number')] || '';
-    const intentRaw = cols[idx('intent')] || '';
+    const business_type = (cols[idx('business_type')] || '').trim();
+    const notable_info = idx('notable_info') !== -1 ? (cols[idx('notable_info')] || '').trim() : '';
+    const has_website = toBool(idx('has_website') !== -1 ? cols[idx('has_website')] : '');
+    const running_ads = toBool(idx('running_ads') !== -1 ? cols[idx('running_ads')] : '');
 
     const number = normalizeNumber(numberRaw);
-    const intent = intentRaw.trim().toLowerCase();
-    const property_type = idx('property_type') !== -1 ? (cols[idx('property_type')] || '') : '';
-    const location = idx('location') !== -1 ? (cols[idx('location')] || '') : '';
 
     if (!name || !number || number.length < 10) continue;
-    if (!['buyer', 'seller'].includes(intent)) continue;
 
     const key = number;
     if (seen.has(key)) continue;
@@ -79,12 +83,12 @@ export async function loadContacts(csvPath) {
       id: key,
       name,
       number, // digits only
-      intent,
-      property_type,
-      location
+      business_type,
+      notable_info,
+      has_website,
+      running_ads
     });
   }
 
   return contacts;
 }
-

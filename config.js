@@ -13,7 +13,7 @@ export const config = {
   openRouter: {
     apiKey: process.env.OPENROUTER_API_KEY || '',
     baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
-    model: process.env.OPENROUTER_MODEL || 'meta-llama/llama-3.1-8b-instruct:free'
+    model: process.env.OPENROUTER_MODEL || 'openrouter/free'
   },
 
   // WhatsApp forwarding destination (digits only, include country code)
@@ -44,8 +44,11 @@ export const config = {
     systemPrompt:
       process.env.SCORING_SYSTEM_PROMPT ||
       [
-        'You are a real estate lead qualifier.',
-        'Given the WhatsApp conversation, classify the lead as HOT, WARM, or COLD.',
+        'Evaluate this WhatsApp conversation between a freelance web developer and a small business owner.',
+        'Classify the lead as:',
+        '- HOT: actively interested, asked questions, or agreed to a call',
+        '- WARM: politely engaged but not committed',
+        '- COLD: ignored, refused, or gave a one-word reply',
         'Return STRICT JSON only with keys: score, reason.',
         'score must be one of: HOT, WARM, COLD.',
         'reason must be a single short sentence.'

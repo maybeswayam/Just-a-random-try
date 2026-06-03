@@ -1,4 +1,4 @@
-﻿import { buildOpeningMessage } from './templateEngine.js';
+import { generateOutreachMessage } from './templateEngine.js';
 import { sendMessageToNumber } from './waClient.js';
 import { getState, updateContact, incrementDailySent } from './stateStore.js';
 
@@ -18,10 +18,14 @@ export async function runOutreachBatch({ client, config }) {
   try {
     const state = await getState(config.paths.stateJson);
 
-    const pending = Object.values(state.contacts).filter((c) => !c.sent);
+    const pending = Object.values(state.contacts).filter((c) => process.env.TEST_MODE === 'true' || !c.sent);
     if (pending.length === 0) {
       console.log('[Scheduler] No pending contacts to message.');
       return;
+    }
+
+    if (process.env.TEST_MODE === 'true') {
+      console.log('[Scheduler] TEST_MODE active — sent status will not be saved');
     }
 
     console.log(`[Scheduler] Pending contacts: ${pending.length}`);
@@ -33,12 +37,14 @@ export async function runOutreachBatch({ client, config }) {
         return;
       }
 
-      const msg = buildOpeningMessage(contact);
+      const msg = await generateOutreachMessage(contact);
       try {
         await sendMessageToNumber(client, contact.number, msg);
 
         await updateContact(config.paths.stateJson, contact.id, (c) => {
-          c.sent = true;
+          if (process.env.TEST_MODE !== 'true') {
+            c.sent = true;
+          }
           c.lastOutboundAt = new Date().toISOString();
           c.conversation ||= [];
           c.conversation.push({ from: 'you', text: msg, at: new Date().toISOString() });

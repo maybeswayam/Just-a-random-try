@@ -18,7 +18,12 @@ async function main() {
   await syncContactsIntoState(config.paths.stateJson, contacts);
 
   const client = createWhatsAppClient();
-  attachReplyListener({ client });
+  
+  if (process.env.TEST_MODE !== 'true') {
+    attachReplyListener({ client });
+  } else {
+    console.log('[Init] TEST_MODE active — inbound message handling is disabled.');
+  }
 
   client.on('ready', () => {
     startScheduler({ client, config });

@@ -1,4 +1,4 @@
-﻿import { config } from '../config.js';
+import { config } from '../config.js';
 
 function sleep(ms) {
   return new Promise((r) => setTimeout(r, ms));
@@ -28,9 +28,10 @@ export async function scoreLead(contact) {
         content:
           `Contact:\n` +
           `Name: ${contact.name}\n` +
-          `Intent: ${contact.intent}\n` +
-          `Property: ${contact.property_type || ''}\n` +
-          `Location: ${contact.location || ''}\n\n` +
+          `Business type: ${contact.business_type || ''}\n` +
+          `Notable info: ${contact.notable_info || ''}\n` +
+          `Has website: ${contact.has_website}\n` +
+          `Running ads: ${contact.running_ads}\n\n` +
           `Conversation:\n${convo}\n\n` +
           `Return JSON only.`
       }
