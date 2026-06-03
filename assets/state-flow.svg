@@ -1,68 +1,75 @@
 <svg width="800" height="160" viewBox="0 0 800 160" xmlns="http://www.w3.org/2000/svg" role="img">
   <title>Contact lifecycle — state flow</title>
-  <desc>A contact moves from PENDING to SENT to REPLIED to SCORED, then either FORWARDED (HOT) or IGNORED (WARM/COLD)</desc>
+  <defs>
+    <pattern id="dots3" width="20" height="20" patternUnits="userSpaceOnUse">
+      <circle cx="1" cy="1" r="1" fill="#1a221a" opacity="0.7"/>
+    </pattern>
+  </defs>
 
-  <rect width="800" height="160" fill="#0d1117" rx="12"/>
+  <rect width="800" height="160" fill="#0a0f0a" rx="10"/>
+  <rect width="800" height="160" fill="url(#dots3)" rx="10"/>
 
   <!-- Header -->
-  <text x="24" y="28" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6e7681" letter-spacing="1">CONTACT LIFECYCLE</text>
-  <line x1="24" y1="36" x2="776" y2="36" stroke="#21262d" stroke-width="1"/>
+  <rect x="24" y="14" width="3" height="16" fill="#00ff9d" rx="1"/>
+  <text x="34" y="26" font-family="'Courier New',monospace" font-size="9" fill="#3a6a3a" letter-spacing="2">CONTACT_LIFECYCLE</text>
+  <line x1="24" y1="38" x2="776" y2="38" stroke="#1a2a1a" stroke-width="1"/>
 
   <!-- PENDING -->
-  <rect x="24" y="54" width="90" height="36" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
-  <text x="69" y="76" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" font-weight="600" fill="#8b949e" text-anchor="middle">PENDING</text>
-  <text x="69" y="108" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6e7681" text-anchor="middle">added to CSV</text>
+  <rect x="24" y="52" width="88" height="34" rx="4" fill="#0d150d" stroke="#2a4a2a" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="68" y="73" font-family="'Courier New',monospace" font-size="10" font-weight="700" fill="#3a6a3a" text-anchor="middle">PENDING</text>
+  <text x="68" y="104" font-family="'Courier New',monospace" font-size="8" fill="#2a4a2a" text-anchor="middle">added to csv</text>
 
   <!-- Arrow -->
-  <line x1="114" y1="72" x2="144" y2="72" stroke="#30363d" stroke-width="1.5"/>
-  <polyline points="138,68 144,72 138,76" fill="none" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round"/>
+  <line x1="112" y1="69" x2="138" y2="69" stroke="#2a4a2a" stroke-width="1.5"/>
+  <polyline points="133,65 139,69 133,73" fill="none" stroke="#2a4a2a" stroke-width="1.5" stroke-linejoin="round"/>
 
   <!-- SENT -->
-  <rect x="146" y="54" width="90" height="36" rx="8" fill="#0d2a14" stroke="#3fb950" stroke-width="1.5"/>
-  <text x="191" y="76" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" font-weight="600" fill="#3fb950" text-anchor="middle">SENT</text>
-  <text x="191" y="108" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6e7681" text-anchor="middle">outreach sent</text>
+  <rect x="140" y="52" width="88" height="34" rx="4" fill="#0a1f0a" stroke="#00ff9d" stroke-width="1.5"/>
+  <text x="184" y="73" font-family="'Courier New',monospace" font-size="10" font-weight="700" fill="#00ff9d" text-anchor="middle">SENT</text>
+  <text x="184" y="104" font-family="'Courier New',monospace" font-size="8" fill="#3a6a3a" text-anchor="middle">msg delivered</text>
 
   <!-- Arrow -->
-  <line x1="236" y1="72" x2="266" y2="72" stroke="#30363d" stroke-width="1.5"/>
-  <polyline points="260,68 266,72 260,76" fill="none" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round"/>
+  <line x1="228" y1="69" x2="254" y2="69" stroke="#2a4a2a" stroke-width="1.5"/>
+  <polyline points="249,65 255,69 249,73" fill="none" stroke="#2a4a2a" stroke-width="1.5" stroke-linejoin="round"/>
 
   <!-- REPLIED -->
-  <rect x="268" y="54" width="90" height="36" rx="8" fill="#1a1a2e" stroke="#d2a8ff" stroke-width="1.5"/>
-  <text x="313" y="76" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" font-weight="600" fill="#d2a8ff" text-anchor="middle">REPLIED</text>
-  <text x="313" y="108" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6e7681" text-anchor="middle">reply received</text>
+  <rect x="256" y="52" width="88" height="34" rx="4" fill="#00101f" stroke="#00e5ff" stroke-width="1.5"/>
+  <text x="300" y="73" font-family="'Courier New',monospace" font-size="10" font-weight="700" fill="#00e5ff" text-anchor="middle">REPLIED</text>
+  <text x="300" y="104" font-family="'Courier New',monospace" font-size="8" fill="#2a5a6a" text-anchor="middle">reply tracked</text>
 
   <!-- Arrow -->
-  <line x1="358" y1="72" x2="388" y2="72" stroke="#30363d" stroke-width="1.5"/>
-  <polyline points="382,68 388,72 382,76" fill="none" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round"/>
+  <line x1="344" y1="69" x2="370" y2="69" stroke="#2a4a2a" stroke-width="1.5"/>
+  <polyline points="365,65 371,69 365,73" fill="none" stroke="#2a4a2a" stroke-width="1.5" stroke-linejoin="round"/>
 
   <!-- SCORED -->
-  <rect x="390" y="54" width="90" height="36" rx="8" fill="#1f1a00" stroke="#e3b341" stroke-width="1.5"/>
-  <text x="435" y="76" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" font-weight="600" fill="#e3b341" text-anchor="middle">SCORED</text>
-  <text x="435" y="108" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6e7681" text-anchor="middle">AI verdict</text>
+  <rect x="372" y="52" width="88" height="34" rx="4" fill="#1a1400" stroke="#ffb300" stroke-width="1.5"/>
+  <text x="416" y="73" font-family="'Courier New',monospace" font-size="10" font-weight="700" fill="#ffb300" text-anchor="middle">SCORED</text>
+  <text x="416" y="104" font-family="'Courier New',monospace" font-size="8" fill="#5a4a00" text-anchor="middle">AI verdict</text>
 
-  <!-- Fork line up and down -->
-  <line x1="480" y1="72" x2="510" y2="72" stroke="#30363d" stroke-width="1.5"/>
-  <line x1="510" y1="50" x2="510" y2="116" stroke="#30363d" stroke-width="1.5"/>
+  <!-- Fork -->
+  <line x1="460" y1="69" x2="488" y2="69" stroke="#2a4a2a" stroke-width="1.5"/>
+  <line x1="488" y1="48" x2="488" y2="112" stroke="#2a4a2a" stroke-width="1.5"/>
 
-  <!-- Arrow to FORWARDED (top) -->
-  <line x1="510" y1="58" x2="540" y2="58" stroke="#30363d" stroke-width="1.5"/>
-  <polyline points="534,54 540,58 534,62" fill="none" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- HOT branch -->
+  <line x1="488" y1="56" x2="510" y2="56" stroke="#ff4d4d" stroke-width="1.5"/>
+  <polyline points="505,52 511,56 505,60" fill="none" stroke="#ff4d4d" stroke-width="1.5" stroke-linejoin="round"/>
+  <text x="494" y="50" font-family="'Courier New',monospace" font-size="7" fill="#ff4d4d">HOT</text>
 
   <!-- FORWARDED -->
-  <rect x="542" y="40" width="110" height="36" rx="8" fill="#2d0f0f" stroke="#f85149" stroke-width="1.5"/>
-  <text x="597" y="62" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" font-weight="600" fill="#f85149" text-anchor="middle">FORWARDED ✓</text>
-  <text x="597" y="92" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#f0883e" text-anchor="middle">HOT lead alerted</text>
+  <rect x="512" y="40" width="116" height="34" rx="4" fill="#1f0a0a" stroke="#ff4d4d" stroke-width="1.5"/>
+  <text x="570" y="61" font-family="'Courier New',monospace" font-size="10" font-weight="700" fill="#ff4d4d" text-anchor="middle">FORWARDED ✓</text>
+  <text x="570" y="90" font-family="'Courier New',monospace" font-size="8" fill="#ff9d5c" text-anchor="middle">alert sent · next step</text>
 
-  <!-- Arrow to IGNORED (bottom) -->
-  <line x1="510" y1="108" x2="540" y2="108" stroke="#30363d" stroke-width="1.5"/>
-  <polyline points="534,104 540,108 534,112" fill="none" stroke="#30363d" stroke-width="1.5" stroke-linejoin="round"/>
+  <!-- COLD branch -->
+  <line x1="488" y1="104" x2="510" y2="104" stroke="#2a4a2a" stroke-width="1.5"/>
+  <polyline points="505,100 511,104 505,108" fill="none" stroke="#2a4a2a" stroke-width="1.5" stroke-linejoin="round"/>
+  <text x="490" y="120" font-family="'Courier New',monospace" font-size="7" fill="#2a4a2a">COLD</text>
 
   <!-- IGNORED -->
-  <rect x="542" y="90" width="110" height="36" rx="8" fill="#161b22" stroke="#30363d" stroke-width="1.5"/>
-  <text x="597" y="112" font-family="'Segoe UI',system-ui,sans-serif" font-size="11" font-weight="600" fill="#6e7681" text-anchor="middle">IGNORED</text>
-  <text x="597" y="142" font-family="'Segoe UI',system-ui,sans-serif" font-size="10" fill="#6e7681" text-anchor="middle">WARM / COLD</text>
+  <rect x="512" y="88" width="116" height="34" rx="4" fill="#0d150d" stroke="#2a4a2a" stroke-width="1.5" stroke-dasharray="4,2"/>
+  <text x="570" y="109" font-family="'Courier New',monospace" font-size="10" font-weight="700" fill="#2a4a2a" text-anchor="middle">IGNORED</text>
+  <text x="570" y="138" font-family="'Courier New',monospace" font-size="8" fill="#1a3a1a" text-anchor="middle">WARM / COLD</text>
 
-  <!-- Labels on fork -->
-  <text x="526" y="54" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" fill="#3fb950" text-anchor="middle">HOT</text>
-  <text x="526" y="122" font-family="'Segoe UI',system-ui,sans-serif" font-size="9" fill="#6e7681" text-anchor="middle">COLD</text>
+  <!-- corner tag -->
+  <text x="776" y="152" font-family="'Courier New',monospace" font-size="8" fill="#1a2a1a" text-anchor="end">state_flow_v2.svg</text>
 </svg>

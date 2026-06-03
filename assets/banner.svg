@@ -1,33 +1,87 @@
-<svg width="800" height="120" viewBox="0 0 800 120" xmlns="http://www.w3.org/2000/svg" role="img">
-  <title>WhatsApp Real Estate Outreach Bot</title>
-
-  <rect width="800" height="120" fill="#0d1117" rx="12"/>
-
-  <!-- Subtle grid pattern -->
+<svg width="800" height="140" viewBox="0 0 680 140" role="img" xmlns="http://www.w3.org/2000/svg">
+  <title>WhatsApp Freelance Outreach Bot banner</title>
+  <desc>Dark terminal-style banner with circuit motif, monospace title, and HOT/WARM/COLD score badges</desc>
   <defs>
-    <pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse">
-      <path d="M 40 0 L 0 0 0 40" fill="none" stroke="#161b22" stroke-width="1"/>
-    </pattern>
+    <style>
+      @import url('https://fonts.googleapis.com/css2?family=Share+Tech+Mono&display=swap');
+      .mono { font-family: 'Share Tech Mono', 'Courier New', monospace; }
+      .blink { animation: blink 1.1s step-end infinite; }
+      @keyframes blink { 50% { opacity: 0; } }
+      .scan { animation: scan 3s linear infinite; }
+      @keyframes scan {
+        0%   { transform: translateY(0px);   opacity: 0; }
+        10%  { opacity: 0.06; }
+        90%  { opacity: 0.06; }
+        100% { transform: translateY(140px); opacity: 0; }
+      }
+    </style>
   </defs>
-  <rect width="800" height="120" fill="url(#grid)" rx="12" opacity="0.6"/>
 
-  <!-- Glow circle behind icon -->
-  <circle cx="400" cy="60" r="80" fill="#25D366" opacity="0.04"/>
-  <circle cx="400" cy="60" r="50" fill="#25D366" opacity="0.05"/>
+  <rect width="680" height="140" fill="#050d05" rx="8"/>
 
-  <!-- WA icon large -->
-  <circle cx="290" cy="60" r="28" fill="none" stroke="#25D366" stroke-width="2"/>
-  <path d="M276 60 Q276 46 290 46 Q304 46 304 60 Q304 70 297 74 L290 76 L283 78 L285 74 Q276 70 276 60Z" fill="none" stroke="#25D366" stroke-width="1.8" stroke-linejoin="round"/>
+  <!-- Circuit traces -->
+  <g stroke="#0d2a0d" stroke-width="0.8" fill="none">
+    <polyline points="0,30 60,30 60,70 100,70"/>
+    <polyline points="0,80 40,80 40,110 80,110"/>
+    <polyline points="680,50 620,50 620,30 580,30"/>
+    <polyline points="680,100 640,100 640,70 600,70"/>
+    <polyline points="580,30 580,110 540,110"/>
+    <polyline points="100,70 100,30 160,30"/>
+    <polyline points="80,110 80,60 130,60"/>
+  </g>
+  <g fill="#0d2a0d">
+    <circle cx="60" cy="70" r="2.5"/>
+    <circle cx="40" cy="80" r="2.5"/>
+    <circle cx="620" cy="50" r="2.5"/>
+    <circle cx="640" cy="100" r="2.5"/>
+    <circle cx="580" cy="110" r="2.5"/>
+    <circle cx="100" cy="70" r="2.5"/>
+    <circle cx="80" cy="110" r="2.5"/>
+  </g>
+
+  <!-- Left accent bar -->
+  <rect x="28" y="28" width="3" height="84" fill="#00c96e" rx="1.5"/>
+  <path d="M28,28 L28,22 L42,22" stroke="#00c96e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
+  <path d="M28,112 L28,118 L42,118" stroke="#00c96e" stroke-width="1.5" fill="none" stroke-linecap="round"/>
 
   <!-- Title -->
-  <text x="332" y="52" font-family="'Segoe UI',system-ui,sans-serif" font-size="22" font-weight="700" fill="#e6edf3">WhatsApp Outreach Bot</text>
-  <text x="332" y="76" font-family="'Segoe UI',system-ui,sans-serif" font-size="13" fill="#8b949e">Real estate lead automation with AI scoring</text>
+  <text x="44" y="61" class="mono" font-size="28" font-weight="700" fill="#e8ffe8" letter-spacing="1.5">WA Outreach</text>
+  <rect x="262" y="40" width="3" height="22" fill="#00c96e" rx="1" class="blink"/>
 
-  <!-- Accent dots -->
-  <circle cx="332" cy="96" r="3" fill="#25D366" opacity="0.8"/>
-  <circle cx="342" cy="96" r="3" fill="#58a6ff" opacity="0.8"/>
-  <circle cx="352" cy="96" r="3" fill="#d2a8ff" opacity="0.8"/>
-  <circle cx="362" cy="96" r="3" fill="#e3b341" opacity="0.8"/>
-  <circle cx="372" cy="96" r="3" fill="#f0883e" opacity="0.8"/>
-  <circle cx="382" cy="96" r="3" fill="#f85149" opacity="0.8"/>
+  <!-- Subtitle -->
+  <text x="44" y="83" class="mono" font-size="11" fill="#3a7a3a" letter-spacing="0.5">// freelance web dev · cold outreach automation · AI lead scoring</text>
+
+  <!-- Stat pills -->
+  <rect x="44" y="96" width="78" height="18" rx="3" fill="#051a0a" stroke="#00c96e" stroke-width="0.8"/>
+  <text x="83" y="109" class="mono" font-size="9" fill="#00c96e" text-anchor="middle">NODE.JS</text>
+
+  <rect x="130" y="96" width="78" height="18" rx="3" fill="#00101a" stroke="#00aaff" stroke-width="0.8"/>
+  <text x="169" y="109" class="mono" font-size="9" fill="#00aaff" text-anchor="middle">WA-WEB.JS</text>
+
+  <rect x="216" y="96" width="90" height="18" rx="3" fill="#1a1400" stroke="#ffaa00" stroke-width="0.8"/>
+  <text x="261" y="109" class="mono" font-size="9" fill="#ffaa00" text-anchor="middle">OPENROUTER</text>
+
+  <rect x="314" y="96" width="64" height="18" rx="3" fill="#1a0005" stroke="#ff4466" stroke-width="0.8"/>
+  <text x="346" y="109" class="mono" font-size="9" fill="#ff4466" text-anchor="middle">TEST MODE</text>
+
+  <!-- Lead score badges -->
+  <text x="530" y="53" class="mono" font-size="9" fill="#2a5a2a" text-anchor="middle">LEAD SCORE</text>
+
+  <rect x="484" y="59" width="38" height="22" rx="3" fill="#2d0a0a" stroke="#ff4466" stroke-width="1"/>
+  <text x="503" y="74" class="mono" font-size="10" fill="#ff4466" text-anchor="middle">HOT</text>
+
+  <rect x="527" y="59" width="48" height="22" rx="3" fill="#1f1400" stroke="#ffaa00" stroke-width="1"/>
+  <text x="551" y="74" class="mono" font-size="10" fill="#ffaa00" text-anchor="middle">WARM</text>
+
+  <rect x="580" y="59" width="46" height="22" rx="3" fill="#001020" stroke="#00aaff" stroke-width="1"/>
+  <text x="603" y="74" class="mono" font-size="10" fill="#00aaff" text-anchor="middle">COLD</text>
+
+  <line x1="503" y1="81" x2="503" y2="95" stroke="#ff4466" stroke-width="0.8" stroke-dasharray="2,2"/>
+  <line x1="551" y1="81" x2="551" y2="95" stroke="#ffaa00" stroke-width="0.8" stroke-dasharray="2,2"/>
+  <line x1="603" y1="81" x2="603" y2="95" stroke="#00aaff" stroke-width="0.8" stroke-dasharray="2,2"/>
+
+  <text x="648" y="131" class="mono" font-size="8" fill="#1a3a1a" text-anchor="end">v2.0.0</text>
+
+  <!-- Scanline -->
+  <rect x="0" y="0" width="680" height="6" fill="#00ff88" rx="0" class="scan" opacity="0"/>
 </svg>
