@@ -10,8 +10,10 @@ function stripCodeFences(s) {
 }
 
 export async function scoreLead(contact) {
-  if (!config.openRouter.apiKey) {
-    console.warn('[AI] OPENROUTER_API_KEY missing; skipping scoring.');
+  const aiConfig = config.aiProvider.active;
+  
+  if (!aiConfig.apiKey) {
+    console.warn(`[AI] ${config.aiProvider.provider.toUpperCase()}_API_KEY missing; skipping scoring.`);
     return null;
   }
 
@@ -20,7 +22,7 @@ export async function scoreLead(contact) {
     .join('\n');
 
   const payload = {
-    model: config.openRouter.model,
+    model: aiConfig.model,
     messages: [
       { role: 'system', content: config.scoring.systemPrompt },
       {
@@ -44,10 +46,10 @@ export async function scoreLead(contact) {
 
   while (attempt < maxAttempts) {
     try {
-      const res = await fetch(`${config.openRouter.baseUrl}/chat/completions`, {
+      const res = await fetch(`${aiConfig.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${config.openRouter.apiKey}`,
+          Authorization: `Bearer ${aiConfig.apiKey}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -55,7 +57,7 @@ export async function scoreLead(contact) {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`OpenRouter error ${res.status}: ${text}`);
+        throw new Error(`${config.aiProvider.provider} error ${res.status}: ${text}`);
       }
 
       const data = await res.json();

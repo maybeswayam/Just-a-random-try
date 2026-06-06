@@ -6,8 +6,9 @@ import { attachReplyListener } from './modules/replyListener.js';
 import { startScheduler } from './modules/scheduler.js';
 
 async function main() {
-  if (!config.openRouter.apiKey) {
-    console.warn('[Config] OPENROUTER_API_KEY not set. AI scoring will be disabled.');
+  const aiConfig = config.aiProvider.active;
+  if (!aiConfig.apiKey) {
+    console.warn(`[Config] ${config.aiProvider.provider.toUpperCase()}_API_KEY not set. AI scoring will be disabled.`);
   }
   if (!config.forwardToNumber) {
     console.warn('[Config] FORWARD_TO_NUMBER not set. Forwarding will be disabled.');

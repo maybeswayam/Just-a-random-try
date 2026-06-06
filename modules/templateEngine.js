@@ -6,16 +6,18 @@ function sleep(ms) {
 
 /**
  * Generates a personalized cold outreach message for a business lead
- * using the OpenRouter API.
+ * using AI API (Gemini or OpenRouter).
  */
 export async function generateOutreachMessage(contact) {
-  if (!config.openRouter.apiKey) {
+  const aiConfig = config.aiProvider.active;
+  
+  if (!aiConfig.apiKey) {
     // Fallback if no API key is configured
     return `Hi ${contact.name || 'there'}, I'm a freelance web developer and I think a strong online presence could really help your ${contact.business_type || 'business'}. Would you be open to a quick chat?`;
   }
 
   const payload = {
-    model: config.openRouter.model,
+    model: aiConfig.model,
     messages: [
       {
         role: 'system',
@@ -53,12 +55,12 @@ export async function generateOutreachMessage(contact) {
 
   while (attempt < maxAttempts) {
     try {
-      console.log(`[TemplateEngine] Calling model: ${config.openRouter.model}`);
+      console.log(`[TemplateEngine] Calling model: ${aiConfig.model} (${config.aiProvider.provider})`);
       console.log(`[TemplateEngine] For contact: ${contact.name}`);
-      const res = await fetch(`${config.openRouter.baseUrl}/chat/completions`, {
+      const res = await fetch(`${aiConfig.baseUrl}/chat/completions`, {
         method: 'POST',
         headers: {
-          Authorization: `Bearer ${config.openRouter.apiKey}`,
+          Authorization: `Bearer ${aiConfig.apiKey}`,
           'Content-Type': 'application/json'
         },
         body: JSON.stringify(payload)
@@ -66,14 +68,14 @@ export async function generateOutreachMessage(contact) {
 
       if (!res.ok) {
         const text = await res.text();
-        throw new Error(`OpenRouter error ${res.status}: ${text}`);
+        throw new Error(`${config.aiProvider.provider} error ${res.status}: ${text}`);
       }
 
       const data = await res.json();
       const message = (data?.choices?.[0]?.message?.content || '').trim();
 
       if (!message) {
-        throw new Error('Empty response from OpenRouter');
+        throw new Error('Empty response from AI provider');
       }
 
       return message;

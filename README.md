@@ -6,7 +6,7 @@
 
 [![Node.js](https://img.shields.io/badge/Node.js-18%2B-339933?style=flat-square&logo=node.js&logoColor=white)](https://nodejs.org)
 [![whatsapp-web.js](https://img.shields.io/badge/whatsapp--web.js-1.23-25D366?style=flat-square&logo=whatsapp&logoColor=white)](https://github.com/pedroslopez/whatsapp-web.js)
-[![OpenRouter](https://img.shields.io/badge/AI-OpenRouter-6366f1?style=flat-square)](https://openrouter.ai)
+[![Gemini](https://img.shields.io/badge/AI-Gemini%203.5%20Flash-4285F4?style=flat-square&logo=google&logoColor=white)](https://ai.google.dev)
 [![License](https://img.shields.io/badge/license-MIT-blue?style=flat-square)](LICENSE)
 
 </div>
@@ -52,11 +52,11 @@ whatsapp-realestate-bot/
 └── modules/
     ├── csvLoader.js         # Parse, normalize, validate, dedupe contacts
     ├── stateStore.js        # JSON persistence with async write lock
-    ├── templateEngine.js    # 4 message variants per buyer/seller intent
+    ├── templateEngine.js    # AI-generated personalized messages
     ├── waClient.js          # whatsapp-web.js + LocalAuth session
     ├── scheduler.js         # Outreach pacing, concurrency guard, daily cap
     ├── replyListener.js     # Inbound handler, scoped to CSV contacts only
-    ├── aiScorer.js          # OpenRouter scoring with exponential retry
+    ├── aiScorer.js          # Gemini scoring with exponential retry
     └── forwardEngine.js     # Format and forward HOT leads, one-time only
 ```
 
@@ -82,15 +82,20 @@ Open `.env` and set:
 
 ```env
 # Required
-OPENROUTER_API_KEY=your_key_here
+GEMINI_API_KEY=your_gemini_api_key_here
 FORWARD_TO_NUMBER=918979909409        # digits only — no + or spaces
 
 # Optional tuning
+GEMINI_MODEL=gemini-3.5-flash         # Gemini model to use
 MIN_DELAY_SECONDS=45
 MAX_DELAY_SECONDS=90
 MAX_MESSAGES_PER_DAY=35
 FORWARD_IF_SCORE_IN=HOT
-OPENROUTER_MODEL=meta-llama/llama-3.1-8b-instruct:free
+
+# Optional: Use OpenRouter instead of Gemini
+# AI_PROVIDER=openrouter
+# OPENROUTER_API_KEY=your_key_here
+# OPENROUTER_MODEL=meta-llama/llama-3.1-8b-instruct:free
 ```
 
 ### 3. Prepare your contact list
@@ -124,7 +129,7 @@ On first run, scan the QR code printed in terminal using **WhatsApp → Linked D
 
 ## AI lead scoring
 
-Every inbound reply triggers an OpenRouter API call with the full conversation thread as context. The model returns a structured verdict:
+Every inbound reply triggers a Gemini API call with the full conversation thread as context. The model returns a structured verdict:
 
 ```json
 {
@@ -183,20 +188,28 @@ The scorer retries up to 3 times with exponential backoff on API failures. Once 
 
 | Variable | Default | Description |
 |---|---|---|
-| `OPENROUTER_API_KEY` | — | **Required.** Your OpenRouter API key |
+| `GEMINI_API_KEY` | — | **Required.** Your Google Gemini API key ([Get one here](https://ai.google.dev)) |
 | `FORWARD_TO_NUMBER` | — | **Required.** Digits-only number to receive alerts |
+| `GEMINI_MODEL` | `gemini-3.5-flash` | Gemini model for scoring and message generation |
 | `MIN_DELAY_SECONDS` | `45` | Minimum gap between outreach messages |
 | `MAX_DELAY_SECONDS` | `90` | Maximum gap between outreach messages |
 | `MAX_MESSAGES_PER_DAY` | `35` | Daily outreach cap, resets at midnight |
 | `FORWARD_IF_SCORE_IN` | `HOT` | Scores that trigger forwarding |
-| `OPENROUTER_MODEL` | `meta-llama/llama-3.1-8b-instruct:free` | Model for lead scoring |
+| `AI_PROVIDER` | `gemini` | AI provider to use (`gemini` or `openrouter`) |
+
+### Legacy OpenRouter Support
+
+| Variable | Default | Description |
+|---|---|---|
+| `OPENROUTER_API_KEY` | — | Your OpenRouter API key (when using OpenRouter) |
+| `OPENROUTER_MODEL` | `openrouter/free` | Model for lead scoring (when using OpenRouter) |
 
 ---
 
 ## Tech stack
 
 - **[whatsapp-web.js](https://github.com/pedroslopez/whatsapp-web.js)** — WhatsApp Web automation via Puppeteer
-- **[OpenRouter](https://openrouter.ai)** — Unified LLM API (Llama, Mistral, Gemini, and more)
+- **[Google Gemini](https://ai.google.dev)** — Gemini 3.5 Flash for AI-powered message generation and lead scoring (OpenRouter also supported)
 - **Node.js ESM** — Native ES modules throughout
 - **JSON state** — Flat file persistence with async mutex for safe concurrent writes
 

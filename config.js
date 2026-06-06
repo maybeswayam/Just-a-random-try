@@ -9,11 +9,26 @@ import 'dotenv/config';
  */
 
 export const config = {
-  // OpenRouter
-  openRouter: {
-    apiKey: process.env.OPENROUTER_API_KEY || '',
-    baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
-    model: process.env.OPENROUTER_MODEL || 'openrouter/free'
+  // AI Provider configuration
+  aiProvider: {
+    // Gemini
+    gemini: {
+      apiKey: process.env.GEMINI_API_KEY || '',
+      baseUrl: process.env.GEMINI_BASE_URL || 'https://generativelanguage.googleapis.com/v1beta/openai',
+      model: process.env.GEMINI_MODEL || 'gemini-3.5-flash'
+    },
+    // OpenRouter (legacy support)
+    openRouter: {
+      apiKey: process.env.OPENROUTER_API_KEY || '',
+      baseUrl: process.env.OPENROUTER_BASE_URL || 'https://openrouter.ai/api/v1',
+      model: process.env.OPENROUTER_MODEL || 'openrouter/free'
+    },
+    // Which provider to use
+    provider: process.env.AI_PROVIDER || 'gemini',
+    // Get active provider config
+    get active() {
+      return this[this.provider] || this.gemini;
+    }
   },
 
   // WhatsApp forwarding destination (digits only, include country code)
